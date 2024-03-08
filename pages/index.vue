@@ -1,6 +1,6 @@
 <template>
   <div>
-    Coming soon...
+    <auth-template />
   </div>
 </template>
 

@@ -12,6 +12,7 @@
   "dependencies": {
     "@gradin/tailwindcss-scrollbar": "^3.0.1",
     "@vee-validate/nuxt": "^4.12.5",
+    "@vee-validate/yup": "^4.12.6",
     "@vueuse/nuxt": "^10.9.0",
     "nuxt": "^3.10.3",
     "vue": "^3.4.21",
