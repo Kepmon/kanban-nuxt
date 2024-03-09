@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@gradin/tailwindcss-scrollbar": "^3.0.1",
-    "@vee-validate/nuxt": "^4.12.5",
+    "@pinia/nuxt": "^0.5.1",
+    "@vee-validate/nuxt": "^4.12.6",
     "@vee-validate/yup": "^4.12.6",
     "@vueuse/nuxt": "^10.9.0",
     "nuxt": "^3.10.3",
+    "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "yup": "^1.4.0"

@@ -38,7 +38,7 @@
 
         <button
           class="regular-button purple-class"
-          :disabled="form.meta.value.valid === false || buttonLoading"
+          :aria-disabled="form.meta.value.valid === false || buttonLoading ? true : false"
         >
           {{ buttonLoading ? 'Loading...' : currentPath.action }}
         </button>

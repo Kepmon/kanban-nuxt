@@ -20,7 +20,7 @@ button,
   @apply outline outline-transparent focus-visible:outline-purple-600 outline-[3px];
 }
 
-[disabled] {
+[aria-disabled="true"] {
   @apply cursor-not-allowed opacity-[.35];
 }
 

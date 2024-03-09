@@ -3,24 +3,24 @@
     <nuxt-link :to="link.path" class="link">
       Go To {{ link.text }}
     </nuxt-link>
-    <privacy-policy-layout />
+    <privacy-policy-content class="mt-16" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useUserStore } from '../stores/user'
-import { computed } from 'vue'
 
+const isDark = useDark()
 const userStore = useUserStore()
 
 const link = computed(() => {
   return userStore.userID
     ? {
-        path: { name: 'dashboard' },
+        path: '/dashboard',
         text: 'Dashboard'
       }
     : {
-        path: { name: 'login' },
+        path: '/',
         text: 'Login Page'
       }
 })
