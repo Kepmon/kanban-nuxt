@@ -1,8 +1,9 @@
 <template>
   <div class="grid gap-2">
     <label class="text-xs" :for="name">{{ label }}</label>
-    <!-- @input="updatePassword" -->
+
     <Field
+      v-on="name === 'password' ? { input: (e: InputEvent) => updatePassword(e) } : {}"
       :id="name"
       :type="type"
       :name="name"
@@ -23,13 +24,11 @@ const props = defineProps<{
   type: HTMLInputElement['type']
 }>()
 
-// const userStore = useUserStore()
+const userStore = useUserStore()
 const name = toRef(props, 'name')
 const { errorMessage } = useField(name)
 
-// const updatePassword = (e: InputEvent) => {
-//   if (props.name !== 'password') return
-
-//   userStore.inputedPassword = (e.target as HTMLInputElement).value
-// }
+const updatePassword = (e: InputEvent) => {
+  userStore.passwordToDeleteAccount = (e.target as HTMLInputElement).value
+}
 </script>
