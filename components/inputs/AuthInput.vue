@@ -1,5 +1,5 @@
 <template>
-  <div class="grid gap-2">
+  <div class="grid gap-2 relative">
     <label class="text-xs" :for="name">{{ label }}</label>
 
     <Field
@@ -7,13 +7,13 @@
       :id="name"
       :type="type"
       :name="name"
-      class="input"
+      class="input mb-[var(--space-for-error-msg)]"
       :class="{
         'border-red-400': errorMessage,
         'border-blue-40 focus-visible:border-purple-400': !errorMessage
       }"
     />
-    <ErrorMessage :name="name" class="font-normal text-xs text-red-400" />
+    <ErrorMessage :name="name" class="absolute -bottom-[var(--space-for-error-msg)] font-normal text-xs text-red-400" />
   </div>
 </template>
 

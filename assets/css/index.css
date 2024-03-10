@@ -1,3 +1,7 @@
+:root {
+  --space-for-error-msg: 0.5rem;
+}
+
 html {
   @apply bg-gray-200 text-black;
 }
