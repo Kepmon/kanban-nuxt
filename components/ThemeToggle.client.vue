@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-center gap-x-6 mx-auto h-12">
+  <div class="flex items-center justify-center gap-x-6 px-6 py-3 mx-auto w-max bg-white dark:bg-gray-700 rounded-b-3xl">
     <img src="/img/icon-light-theme.svg" alt="" />
     <button
       @click="() => toggleDark()"
@@ -32,6 +32,10 @@ const toggleDark = useToggle(isDark)
 }
 
 .toggle-theme {
-  @apply flex items-center px-1 w-[40px] h-[20px] rounded-xl;
+  --padding-x: 0.5rem;
+  --padding-y: 0.25rem;
+  --width: 2rem;
+  @apply box-content rounded-xl;
+  @apply px-[var(--padding-x)] py-[var(--padding-y)] w-[var(--width)];
 }
 </style>

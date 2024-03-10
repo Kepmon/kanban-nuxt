@@ -16,11 +16,12 @@
       />
     </transition>
 
-    <theme-toggle
+    <!-- <theme-toggle
       class="px-8 mb-20 max-w-[180px] bg-white dark:bg-gray-700 rounded-b-3xl"
-    />
+    /> -->
+    <theme-toggle />
 
-    <main class="auth-main">
+    <main class="auth-main mt-14">
       <logo-icon class="mb-4 scale-125 sm:scale-150 border-none" />
       <form @submit.prevent="onSubmit" class="form">
         <header class="xs:text-lg first-letter:uppercase">
