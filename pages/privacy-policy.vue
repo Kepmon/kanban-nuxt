@@ -1,8 +1,6 @@
 <template>
   <div>
-    <nuxt-link :to="link.path" class="link">
-      Go To {{ link.text }}
-    </nuxt-link>
+    <nuxt-link :to="link.path" class="link"> Go To {{ link.text }} </nuxt-link>
     <privacy-policy-content class="mt-16" />
   </div>
 </template>

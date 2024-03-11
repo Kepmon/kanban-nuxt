@@ -3,18 +3,16 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
   darkMode: 'class',
-  plugins: [
-    require('@gradin/tailwindcss-scrollbar')
-  ],
+  plugins: [require('@gradin/tailwindcss-scrollbar')],
   theme: {
     extend: {
       minHeight: {
-        screen: ['100vh', '100svh'],
+        screen: ['100vh', '100svh']
       },
       screens: {
-        'xs': '350px',
-        's': '512px',
-        'lg': '896px'
+        xs: '350px',
+        s: '512px',
+        lg: '896px'
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', ...defaultTheme.fontFamily.sans]
@@ -30,7 +28,7 @@ module.exports = {
           200: 'hsl(237 69% 97%)',
           300: 'hsl(219 69% 74%)',
           500: 'hsl(249 75% 70%)',
-          600: 'hsl(193 75% 59%)',
+          600: 'hsl(193 75% 59%)'
         },
         gray: {
           200: 'hsl(0 0% 91%)',
@@ -71,7 +69,7 @@ module.exports = {
         xxlFluid: 'clamp(1.63rem, calc(1.22rem + 2.29vw), 3.00rem)'
       },
       outlineWidth: {
-        default: 'var(--room-for-outline)',
+        default: 'var(--room-for-outline)'
       },
       boxShadow: {
         xs: '0 0 2px -1px hsl(0 0% 59%)',
@@ -79,27 +77,35 @@ module.exports = {
         option: '0px 0px 1px hsl(216 15% 57%)'
       },
       content: {
-        'checked': 'url("/img/icon-check.svg")'
+        checked: 'url("/img/icon-check.svg")'
       },
       animation: {
         'ping-once': 'ping 1s ease-in-out forwards',
-        'lds-roller-1': 'lds-roller 1.2s -0.036s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'lds-roller-2': 'lds-roller 1.2s -0.072s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'lds-roller-3': 'lds-roller 1.2s -0.108s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'lds-roller-4': 'lds-roller 1.2s -0.144s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'lds-roller-5': 'lds-roller 1.2s -0.180s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'lds-roller-6': 'lds-roller 1.2s -0.216s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'lds-roller-7': 'lds-roller 1.2s -0.252s cubic-bezier(0.5, 0, 0.5, 1) infinite',
-        'lds-roller-8': 'lds-roller 1.2s -0.288s cubic-bezier(0.5, 0, 0.5, 1) infinite'
+        'lds-roller-1':
+          'lds-roller 1.2s -0.036s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'lds-roller-2':
+          'lds-roller 1.2s -0.072s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'lds-roller-3':
+          'lds-roller 1.2s -0.108s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'lds-roller-4':
+          'lds-roller 1.2s -0.144s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'lds-roller-5':
+          'lds-roller 1.2s -0.180s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'lds-roller-6':
+          'lds-roller 1.2s -0.216s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'lds-roller-7':
+          'lds-roller 1.2s -0.252s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'lds-roller-8':
+          'lds-roller 1.2s -0.288s cubic-bezier(0.5, 0, 0.5, 1) infinite'
       },
       keyframes: {
         'lds-roller': {
           '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' },
+          '100%': { transform: 'rotate(360deg)' }
         }
       },
       transformOrigin: {
-        40: '40px 40px',
+        40: '40px 40px'
       }
     },
     scrollbar: {
@@ -124,4 +130,3 @@ module.exports = {
     }
   }
 }
-
