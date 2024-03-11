@@ -3,7 +3,11 @@
     <label class="text-xs" :for="name">{{ label }}</label>
 
     <Field
-      v-on="name === 'password' ? { input: (e: InputEvent) => updatePassword(e) } : {}"
+      v-on="
+        name === 'password'
+          ? { input: (e: InputEvent) => updatePassword(e) }
+          : {}
+      "
       :id="name"
       :type="type"
       :name="name"
@@ -13,7 +17,10 @@
         'border-blue-40 focus-visible:border-purple-400': !errorMessage
       }"
     />
-    <ErrorMessage :name="name" class="absolute -bottom-[var(--space-for-error-msg)] font-normal text-xs text-red-400" />
+    <ErrorMessage
+      :name="name"
+      class="absolute -bottom-[var(--space-for-error-msg)] font-normal text-xs text-red-400"
+    />
   </div>
 </template>
 

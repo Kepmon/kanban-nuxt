@@ -36,7 +36,9 @@
 
         <button
           class="regular-button purple-class"
-          :aria-disabled="form.meta.value.valid === false || buttonLoading ? true : false"
+          :aria-disabled="
+            form.meta.value.valid === false || buttonLoading ? true : false
+          "
         >
           {{ buttonLoading ? 'Loading...' : currentPath.action }}
         </button>
@@ -78,7 +80,7 @@ const isPrivacyPolicyShown = ref(false)
 const availablePaths = {
   '/': {
     action: 'Log in',
-    goTo: 'sign-up' ,
+    goTo: 'sign-up',
     question: "Don't have an account?",
     linkText: 'Create one'
   },
@@ -95,7 +97,7 @@ const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
 
 const emailCondition =
-  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+  /^(([^<>()[\]\\.,;:\s@\\"]+(\.[^<>()[\]\\.,;:\s@\\"]+)*)|(\\".+\\"))@(([^<>()[\]\\.,;:\s@\\"]+\.)+[^<>()[\]\\.,;:\s@\\"]{2,})$/i
 
 const authFormSchema = Yup.object({
   email: Yup.string()

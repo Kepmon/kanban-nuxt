@@ -1,5 +1,7 @@
 <template>
-  <div class="flex items-center justify-center gap-x-6 px-6 py-3 mx-auto w-max bg-white dark:bg-gray-700 rounded-b-3xl">
+  <div
+    class="flex items-center justify-center gap-x-6 px-6 py-3 mx-auto w-max bg-white dark:bg-gray-700 rounded-b-3xl"
+  >
     <img src="/img/icon-light-theme.svg" alt="" />
     <button
       @click="() => toggleDark()"
