@@ -1,9 +1,9 @@
 <template>
   <div>
-    <auth-template />
+    Dashboard
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
   
 </script>
