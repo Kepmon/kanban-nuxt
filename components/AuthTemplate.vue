@@ -65,6 +65,7 @@
 </template>
 
 <script setup lang="ts">
+import { routesSchema } from '~/types/routePaths'
 import LogoIcon from '~/components/svgs/LogoIcon.vue'
 import AuthInput from '~/components/inputs/AuthInput.vue'
 import {
@@ -121,9 +122,9 @@ const form = useForm({
 
 const errorMessage = ref('')
 const buttonLoading = ref(false)
+
 const onSubmit = form.handleSubmit(async (values) => {
   buttonLoading.value = true
-  const route = useRoute()
 
   const response = await $fetch('/api/auth', {
     method: 'POST',
@@ -134,14 +135,21 @@ const onSubmit = form.handleSubmit(async (values) => {
     }
   })
 
-  buttonLoading.value = false
-
   if (!response.ok) {
     errorMessage.value = response.responseError
   }
 
-  handleResponse(response.ok, route.path, buttonLoading)
+  buttonLoading.value = false
+  checkForCurrentPath(response.ok)
 })
+
+const checkForCurrentPath = (response: boolean) => {
+  const route = useRoute()
+  const pathValidation = routesSchema.safeParse(route.path)
+
+  const currentPath = pathValidation.success ? pathValidation.data : undefined
+  handleResponse(response, currentPath, buttonLoading)
+}
 </script>
 
 <style lang="postcss" scoped>
