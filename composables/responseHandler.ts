@@ -1,6 +1,3 @@
-import type { Ref } from 'vue'
-import { ref } from 'vue'
-
 export const isResponseError = ref(false)
 export const isPopupShown = ref(false)
 

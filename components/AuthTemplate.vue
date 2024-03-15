@@ -122,16 +122,25 @@ const form = useForm({
 const errorMessage = ref('')
 const buttonLoading = ref(false)
 const onSubmit = form.handleSubmit(async (values) => {
-  // const submitFn = path === '/' ? userStore.logIn : userStore.register
-
   buttonLoading.value = true
-  // const response = await submitFn(values.email, values.password)
+  const route = useRoute()
 
-  // if (response.ok === false) {
-  //   errorMessage.value = response.errorMessage
-  // }
+  const response = await $fetch('/api/auth', {
+    method: 'POST',
+    body: {
+      email: values.email,
+      password: values.password,
+      repeatPassword: 'repeatPassword' in values ? values.repeatPassword : null
+    }
+  })
 
-  // handleResponse(response.ok, '/dashboard', buttonLoading)
+  buttonLoading.value = false
+
+  if (!response.ok) {
+    errorMessage.value = response.responseError
+  }
+
+  handleResponse(response.ok, route.path, buttonLoading)
 })
 </script>
 
