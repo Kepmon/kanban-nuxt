@@ -73,8 +73,10 @@ import {
   isResponseError,
   handleResponse
 } from '../composables/responseHandler'
-import * as Yup from 'yup'
+import { toTypedSchema } from '@vee-validate/zod'
+import { z } from 'zod'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isDark = useDark()
 const isPrivacyPolicyShown = ref(false)
 
@@ -97,24 +99,46 @@ const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
 
-const emailCondition =
-  /^(([^<>()[\]\\.,;:\s@\\"]+(\.[^<>()[\]\\.,;:\s@\\"]+)*)|(\\".+\\"))@(([^<>()[\]\\.,;:\s@\\"]+\.)+[^<>()[\]\\.,;:\s@\\"]{2,})$/i
-
-const authFormSchema = Yup.object({
-  email: Yup.string()
-    .required("Can't be empty")
-    .matches(emailCondition, 'Must be a valid email'),
-  password: Yup.string()
-    .min(8, 'Must be at least 8 characters long')
-    .required("Can't be empty"),
-  repeatPassword: Yup.string().when('curentPath', {
-    is: () => path === '/sign-up',
-    then: () =>
-      Yup.string()
-        .required("Can't be empty")
-        .oneOf([Yup.ref('password')], 'Passwords do not match')
+const authFormSchema = z
+  .object({
+    email: z
+      .string({
+        required_error: "Can't be empty"
+      })
+      .email({ message: 'Must be a valid email' }),
+    password: z
+      .string({
+        required_error: "Can't be empty"
+      })
+      .min(8, { message: 'Must be at least 8 characters long' }),
+    repeatPassword: z.string().optional()
   })
-})
+  .superRefine((schemaObj, ctx) => {
+    if (path === '/sign-up' && schemaObj.repeatPassword === undefined) {
+      ctx.addIssue({
+        code: 'too_small',
+        type: 'string',
+        minimum: 8,
+        inclusive: true,
+        path: ['repeatPassword'],
+        message: "Can't be empty",
+        fatal: true
+      })
+
+      return z.NEVER
+    }
+
+    if (
+      path === '/sign-up' &&
+      schemaObj.repeatPassword !== schemaObj.password
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['repeatPassword'],
+        message: "Passwords don't match"
+      })
+    }
+  })
 
 const form = useForm({
   validationSchema: toTypedSchema(authFormSchema)
