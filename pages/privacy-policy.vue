@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { useUserStore } from '../stores/user'
 
-const isDark = useDark()
+useDark()
 const userStore = useUserStore()
 
 const link = computed(() => {

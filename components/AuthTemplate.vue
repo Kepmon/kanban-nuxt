@@ -76,8 +76,7 @@ import {
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const isDark = useDark()
+useDark()
 const isPrivacyPolicyShown = ref(false)
 
 const availablePaths = {

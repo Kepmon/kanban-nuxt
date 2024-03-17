@@ -1,4 +1,4 @@
-import { auth, usersColRef } from '../firebase'
+import { auth, usersColRef } from '../../firebase'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
