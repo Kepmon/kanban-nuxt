@@ -26,7 +26,12 @@
         </header>
 
         <auth-input label="Email" name="email" type="email" />
-        <auth-input label="Password" name="password" type="password" />
+        <auth-input
+          ref="passwordInput"
+          label="Password"
+          name="password"
+          type="password"
+        />
         <auth-input
           v-if="path === '/sign-up'"
           label="Repeat Password"
@@ -77,6 +82,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 
 useDark()
+const passwordInput = ref(null)
 const isPrivacyPolicyShown = ref(false)
 
 const availablePaths = {
@@ -98,49 +104,60 @@ const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
 
-const authFormSchema = z
-  .object({
-    email: z
-      .string({
-        required_error: "Can't be empty"
-      })
-      .email({ message: 'Must be a valid email' }),
-    password: z
-      .string({
-        required_error: "Can't be empty"
-      })
-      .min(8, { message: 'Must be at least 8 characters long' }),
-    repeatPassword: z.string().optional()
-  })
-  .superRefine((schemaObj, ctx) => {
-    if (path === '/sign-up' && schemaObj.repeatPassword === undefined) {
-      ctx.addIssue({
-        code: 'too_small',
-        type: 'string',
-        minimum: 8,
-        inclusive: true,
-        path: ['repeatPassword'],
-        message: "Can't be empty",
-        fatal: true
-      })
+const emailSchema = z.object({
+  email: z
+    .string({
+      required_error: "Can't be empty"
+    })
+    .email({ message: 'Must be a valid email' })
+})
 
-      return z.NEVER
-    }
+const passwordSchema = z.object({
+  password: z
+    .string({
+      required_error: "Can't be empty"
+    })
+    .min(8, { message: 'Must be at least 8 characters long' })
+})
 
-    if (
-      path === '/sign-up' &&
-      schemaObj.repeatPassword !== schemaObj.password
-    ) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['repeatPassword'],
-        message: "Passwords don't match"
-      })
-    }
-  })
+const repeatPasswordSchema = z.object({
+  repeatPassword: z
+    .string()
+    .min(8, { message: 'Must be at least 8 characters long' })
+    .optional()
+    .superRefine((repeatPassword, context) => {
+      if (path === '/sign-up' && repeatPassword === undefined) {
+        context.addIssue({
+          code: 'too_small',
+          type: 'string',
+          minimum: 8,
+          inclusive: true,
+          path: ['repeatPassword'],
+          message: "Can't be empty",
+          fatal: true
+        })
+
+        return z.NEVER
+      }
+
+      const passwordValue = passwordInput.value
+        ? passwordInput.value.$el.querySelector('[name="password"]').value
+        : ''
+
+      if (path === '/sign-up' && repeatPassword !== passwordValue) {
+        context.addIssue({
+          code: 'custom',
+          path: ['repeatPassword'],
+          message: "Passwords don't match"
+        })
+      }
+    })
+})
 
 const form = useForm({
-  validationSchema: toTypedSchema(authFormSchema)
+  validationSchema: toTypedSchema(
+    z.intersection(emailSchema, passwordSchema).and(repeatPasswordSchema)
+  )
 })
 
 const errorMessage = ref('')
