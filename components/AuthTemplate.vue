@@ -26,7 +26,12 @@
         </header>
 
         <auth-input label="Email" name="email" type="email" />
-        <auth-input label="Password" name="password" type="password" />
+        <auth-input
+          ref="passwordInput"
+          label="Password"
+          name="password"
+          type="password"
+        />
         <auth-input
           v-if="path === '/sign-up'"
           label="Repeat Password"
@@ -65,6 +70,8 @@
 </template>
 
 <script setup lang="ts">
+import type { ZodType, ZodTypeDef } from 'zod'
+import { routesSchema } from '~/types/routePaths'
 import LogoIcon from '~/components/svgs/LogoIcon.vue'
 import AuthInput from '~/components/inputs/AuthInput.vue'
 import {
@@ -72,9 +79,15 @@ import {
   isResponseError,
   handleResponse
 } from '../composables/responseHandler'
-import * as Yup from 'yup'
+import { toTypedSchema } from '@vee-validate/zod'
 
-const isDark = useDark()
+useDark()
+
+const props = defineProps<{
+  authSchema: ZodType<any, ZodTypeDef, any>
+}>()
+
+const passwordInput = ref(null)
 const isPrivacyPolicyShown = ref(false)
 
 const availablePaths = {
@@ -96,43 +109,39 @@ const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
 
-const emailCondition =
-  /^(([^<>()[\]\\.,;:\s@\\"]+(\.[^<>()[\]\\.,;:\s@\\"]+)*)|(\\".+\\"))@(([^<>()[\]\\.,;:\s@\\"]+\.)+[^<>()[\]\\.,;:\s@\\"]{2,})$/i
-
-const authFormSchema = Yup.object({
-  email: Yup.string()
-    .required("Can't be empty")
-    .matches(emailCondition, 'Must be a valid email'),
-  password: Yup.string()
-    .min(8, 'Must be at least 8 characters long')
-    .required("Can't be empty"),
-  repeatPassword: Yup.string().when('curentPath', {
-    is: () => path === '/sign-up',
-    then: () =>
-      Yup.string()
-        .required("Can't be empty")
-        .oneOf([Yup.ref('password')], 'Passwords do not match')
-  })
-})
-
 const form = useForm({
-  validationSchema: toTypedSchema(authFormSchema)
+  validationSchema: toTypedSchema(props.authSchema)
 })
 
 const errorMessage = ref('')
 const buttonLoading = ref(false)
+
 const onSubmit = form.handleSubmit(async (values) => {
-  // const submitFn = path === '/' ? userStore.logIn : userStore.register
-
   buttonLoading.value = true
-  // const response = await submitFn(values.email, values.password)
 
-  // if (response.ok === false) {
-  //   errorMessage.value = response.errorMessage
-  // }
+  const response = await $fetch('/api/auth', {
+    method: 'POST',
+    body: {
+      email: values.email,
+      password: values.password,
+      repeatPassword: 'repeatPassword' in values ? values.repeatPassword : null
+    }
+  })
 
-  // handleResponse(response.ok, '/dashboard', buttonLoading)
+  if (!response.ok) {
+    errorMessage.value = response.responseError
+  }
+
+  buttonLoading.value = false
+  checkForCurrentPath(response.ok)
 })
+
+const checkForCurrentPath = (response: boolean) => {
+  const pathValidation = routesSchema.safeParse(path)
+
+  const currentPath = pathValidation.success ? pathValidation.data : undefined
+  handleResponse(response, currentPath, buttonLoading)
+}
 </script>
 
 <style lang="postcss" scoped>

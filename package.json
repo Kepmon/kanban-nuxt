@@ -14,12 +14,14 @@
     "@pinia/nuxt": "^0.5.1",
     "@vee-validate/nuxt": "^4.12.6",
     "@vee-validate/yup": "^4.12.6",
+    "@vee-validate/zod": "^4.12.6",
     "@vueuse/nuxt": "^10.9.0",
-    "nuxt": "^3.10.3",
+    "firebase": "^10.9.0",
+    "nuxt": "^3.11.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
-    "yup": "^1.4.0"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^0.2.0",

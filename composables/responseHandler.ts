@@ -1,12 +1,11 @@
-import type { Ref } from 'vue'
-import { ref } from 'vue'
+import type { Routes } from '../types/routePaths'
 
 export const isResponseError = ref(false)
 export const isPopupShown = ref(false)
 
 export const handleResponse = (
   response: boolean,
-  currentPath?: '/' | '/sign-up' | '/dashboard',
+  currentPath?: Routes,
   loading?: Ref<boolean>
 ) => {
   const duration = 3000
