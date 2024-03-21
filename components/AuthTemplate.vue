@@ -70,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ZodType, ZodTypeDef } from 'zod'
 import { routesSchema } from '~/types/routePaths'
 import LogoIcon from '~/components/svgs/LogoIcon.vue'
 import AuthInput from '~/components/inputs/AuthInput.vue'
@@ -79,9 +80,13 @@ import {
   handleResponse
 } from '../composables/responseHandler'
 import { toTypedSchema } from '@vee-validate/zod'
-import { z } from 'zod'
 
 useDark()
+
+const props = defineProps<{
+  authSchema: ZodType<any, ZodTypeDef, any>
+}>()
+
 const passwordInput = ref(null)
 const isPrivacyPolicyShown = ref(false)
 
@@ -104,60 +109,8 @@ const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
 
-const emailSchema = z.object({
-  email: z
-    .string({
-      required_error: "Can't be empty"
-    })
-    .email({ message: 'Must be a valid email' })
-})
-
-const passwordSchema = z.object({
-  password: z
-    .string({
-      required_error: "Can't be empty"
-    })
-    .min(8, { message: 'Must be at least 8 characters long' })
-})
-
-const repeatPasswordSchema = z.object({
-  repeatPassword: z
-    .string()
-    .min(8, { message: 'Must be at least 8 characters long' })
-    .optional()
-    .superRefine((repeatPassword, context) => {
-      if (path === '/sign-up' && repeatPassword === undefined) {
-        context.addIssue({
-          code: 'too_small',
-          type: 'string',
-          minimum: 8,
-          inclusive: true,
-          path: ['repeatPassword'],
-          message: "Can't be empty",
-          fatal: true
-        })
-
-        return z.NEVER
-      }
-
-      const passwordValue = passwordInput.value
-        ? passwordInput.value.$el.querySelector('[name="password"]').value
-        : ''
-
-      if (path === '/sign-up' && repeatPassword !== passwordValue) {
-        context.addIssue({
-          code: 'custom',
-          path: ['repeatPassword'],
-          message: "Passwords don't match"
-        })
-      }
-    })
-})
-
 const form = useForm({
-  validationSchema: toTypedSchema(
-    z.intersection(emailSchema, passwordSchema).and(repeatPasswordSchema)
-  )
+  validationSchema: toTypedSchema(props.authSchema)
 })
 
 const errorMessage = ref('')
@@ -184,8 +137,7 @@ const onSubmit = form.handleSubmit(async (values) => {
 })
 
 const checkForCurrentPath = (response: boolean) => {
-  const route = useRoute()
-  const pathValidation = routesSchema.safeParse(route.path)
+  const pathValidation = routesSchema.safeParse(path)
 
   const currentPath = pathValidation.success ? pathValidation.data : undefined
   handleResponse(response, currentPath, buttonLoading)
