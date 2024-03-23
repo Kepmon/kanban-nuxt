@@ -14,6 +14,10 @@ const userSchema = z.object({
   path: z.literal('/').or(z.literal('/sign-up'))
 })
 
+const errorSchema = z.object({
+  message: z.string()
+})
+
 const login = async ({ email, password }: z.infer<typeof userSchema>) => {
   await signInWithEmailAndPassword(auth, email, password)
 }
@@ -38,13 +42,13 @@ const setPopupMessage = (path: '/' | '/sign-up', errorMessage: string = '') => {
       errorMessage.includes('auth/invalid-credential')
 
     return isCustomMessage
-      ? 'The user name or password are incorrect'
-      : 'Ooops, something went wrong. Try again later.'
+      ? 'Error: The user name or password are incorrect'
+      : 'Error: Ooops, something went wrong. Try again later.'
   }
 
   const successMessages = {
-    '/': 'You logged in successfully',
-    '/sign-up': 'You signed up successfully'
+    '/': 'Success: You logged in successfully',
+    '/sign-up': 'Success: You signed up successfully'
   }
 
   return successMessages[path]
@@ -71,9 +75,16 @@ export default defineEventHandler(async (event) => {
       message: setPopupMessage(validatedBody.path)
     }
   } catch (err) {
+    const doesErrContainMessage = errorSchema.safeParse(err)
+
     return {
       ok: false,
-      message: setPopupMessage(validatedBody.path, err.message)
+      message: doesErrContainMessage.success
+        ? setPopupMessage(
+            validatedBody.path,
+            doesErrContainMessage.data.message
+          )
+        : 'sth-went-wrong'
     }
   }
 })

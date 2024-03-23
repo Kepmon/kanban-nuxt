@@ -5,6 +5,7 @@
     tabindex="-1"
     data-popup="confirmation"
     class="popup-text"
+    :class="popupStore.popupMessage.includes('Success:') && 'opacity-0 scale-0'"
   >
     {{ popupStore.popupMessage }}
   </p>
