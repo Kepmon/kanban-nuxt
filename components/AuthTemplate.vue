@@ -80,7 +80,9 @@ import {
   handleResponse
 } from '../composables/responseHandler'
 import { toTypedSchema } from '@vee-validate/zod'
+import { useActiveElement } from '@vueuse/core'
 
+const activeElement = useActiveElement()
 useDark()
 
 const props = defineProps<{
@@ -129,7 +131,7 @@ const onSubmit = form.handleSubmit(async (values) => {
   })
 
   if (!response.ok) {
-    errorMessage.value = response.responseError
+    setFormErrors()
   }
 
   buttonLoading.value = false
@@ -141,6 +143,15 @@ const checkForCurrentPath = (response: boolean) => {
 
   const currentPath = pathValidation.success ? pathValidation.data : undefined
   handleResponse(response, currentPath, buttonLoading)
+}
+
+const setFormErrors = () => {
+  activeElement.value?.focus()
+  activeElement.value?.setAttribute('aria-describedby', 'confirmation-popup')
+
+  setTimeout(() => {
+    activeElement.value?.removeAttribute('aria-describedby')
+  }, 1000)
 }
 </script>
 

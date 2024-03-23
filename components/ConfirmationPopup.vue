@@ -1,10 +1,5 @@
 <template>
-  <p
-    ref="confirmationPopup"
-    class="popup-text"
-    :class="{ 'opacity-0': !isResponseError }"
-    tabindex="0"
-  >
+  <p id="confirmation-popup" data-popup="confirmation" class="popup-text">
     {{ message }}
   </p>
 </template>
@@ -17,15 +12,6 @@ const props = defineProps<{
 
 const route = useRoute()
 const userStore = useUserStore()
-
-const confirmationPopup = ref<null | HTMLElement>(null)
-onMounted(() => {
-  confirmationPopup.value?.focus()
-})
-
-onUnmounted(() => {
-  confirmationPopup.value?.blur()
-})
 
 const message = computed(() => {
   if (props.isResponseError) {
