@@ -8,14 +8,6 @@
       />
     </transition>
 
-    <transition name="popup">
-      <confirmation-popup
-        v-if="isPopupShown"
-        :isResponseError="isResponseError"
-        :errorMessage="errorMessage"
-      />
-    </transition>
-
     <theme-toggle />
 
     <main class="auth-main mt-14">
@@ -74,11 +66,7 @@ import type { ZodType, ZodTypeDef } from 'zod'
 import { routesSchema } from '~/types/routePaths'
 import LogoIcon from '~/components/svgs/LogoIcon.vue'
 import AuthInput from '~/components/inputs/AuthInput.vue'
-import {
-  isPopupShown,
-  isResponseError,
-  handleResponse
-} from '../composables/responseHandler'
+import { handleResponse } from '../composables/responseHandler'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useActiveElement } from '@vueuse/core'
 
@@ -107,6 +95,7 @@ const availablePaths = {
   }
 }
 
+const popupStore = usePopupStore()
 const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
@@ -115,7 +104,6 @@ const form = useForm({
   validationSchema: toTypedSchema(props.authSchema)
 })
 
-const errorMessage = ref('')
 const buttonLoading = ref(false)
 
 const onSubmit = form.handleSubmit(async (values) => {
@@ -126,14 +114,21 @@ const onSubmit = form.handleSubmit(async (values) => {
     body: {
       email: values.email,
       password: values.password,
-      repeatPassword: 'repeatPassword' in values ? values.repeatPassword : null
+      repeatPassword: 'repeatPassword' in values ? values.repeatPassword : null,
+      path: route.path
     }
   })
 
   if (!response.ok) {
     setFormErrors()
+    popupStore.isPopupShown = true
+
+    setTimeout(() => {
+      popupStore.isPopupShown = false
+    }, popupStore.durationOfPopupShowing)
   }
 
+  popupStore.popupMessage = response.message
   buttonLoading.value = false
   checkForCurrentPath(response.ok)
 })
