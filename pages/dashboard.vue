@@ -16,19 +16,16 @@ const popupStore = usePopupStore()
 const logout = async () => {
   const response = await $fetch('/api/auth')
 
-  if (response) {
-    popupStore.popupMessage = 'Success: You logged out successfully'
-  } else {
-    popupStore.popupMessage =
-      'Error: Ooops, something went wrong. Try again later.'
-  }
-
-  popupStore.isPopupShown = true
-
   setTimeout(() => {
     popupStore.isPopupShown = false
   }, popupStore.durationOfPopupShowing)
 
-  if (response) navigateTo('/')
+  if (response) {
+    popupStore.popupMessage = 'Success: You logged out successfully'
+    navigateTo('/')
+  } else {
+    popupStore.popupMessage =
+      'Error: Ooops, something went wrong. Try again later.'
+  }
 }
 </script>
