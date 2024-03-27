@@ -28,8 +28,9 @@ onMounted(() => {
 
 <style lang="postcss" scoped>
 .popup-text {
-  @apply fixed inset-0 bottom-auto py-10 mx-auto w-[min(90%,25rem)];
+  @apply fixed inset-0 bottom-auto px-4 py-10 mx-auto w-[min(90%,25rem)];
   @apply translate-y-8 text-center text-gray-900 bg-red-400 rounded-xl z-[100];
+  @apply outline outline-transparent;
 }
 
 .popup-enter-from,

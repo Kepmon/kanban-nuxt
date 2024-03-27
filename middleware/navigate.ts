@@ -1,15 +1,11 @@
-const handlePopup = () => {
-  const popupStore = usePopupStore()
-  popupStore.isPopupShown = true
-  popupStore.shouldPopupBeFocused = true
-
-  setTimeout(() => {
-    popupStore.isPopupShown = false
-    popupStore.shouldPopupBeFocused = false
-  }, popupStore.durationOfPopupShowing)
-}
-
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  const navigateToObj = (path: '/' | '/dashboard') => ({
+    path,
+    query: {
+      authenticated: path === '/' ? 'false' : 'true'
+    }
+  })
+
   const pathChangesForPopup = [
     to.path === '/dashboard' && from.path === '/',
     to.path === '/' && from.path === '/dashboard',
@@ -17,16 +13,21 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   ]
 
   if (process.client && pathChangesForPopup.some((pathChange) => pathChange)) {
-    handlePopup()
+    const popupStore = usePopupStore()
+    popupStore.showPopup()
   }
 
-  const userResponse = await $fetch('/api/navigate')
+  const userResponse = await $fetch('/api/userID')
 
   if (to.path === '/dashboard' && userResponse == null) {
-    return navigateTo('/')
+    return navigateTo(navigateToObj('/'), {
+      redirectCode: 307
+    })
   }
 
   if ((to.path === '/' || to.path === '/sign-up') && userResponse != null) {
-    return navigateTo('/dashboard')
+    return navigateTo(navigateToObj('/dashboard'), {
+      redirectCode: 307
+    })
   }
 })

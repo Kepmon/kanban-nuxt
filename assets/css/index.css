@@ -15,6 +15,14 @@ body {
   @apply scrollbar-visibleLight dark:scrollbar-visibleDark;
 }
 
+h1, h2, h3 {
+  @apply text-balance;
+}
+
+p {
+  @apply text-pretty;
+}
+
 button {
   @apply border-none;
 }
