@@ -1,66 +1,36 @@
 <template>
   <p
+    id="confirmation-popup"
     ref="confirmationPopup"
+    tabindex="-1"
+    data-popup="confirmation"
     class="popup-text"
-    :class="{ 'opacity-0': !isResponseError }"
-    tabindex="0"
+    :class="popupStore.popupMessage.includes('Success:') && 'opacity-0 scale-0'"
   >
-    {{ message }}
+    {{ popupStore.popupMessage }}
   </p>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  isResponseError: boolean
-  errorMessage?: string
-}>()
+const popupStore = usePopupStore()
+const confirmationPopup = ref<HTMLParagraphElement | null>(null)
 
-const route = useRoute()
-const userStore = useUserStore()
-
-const confirmationPopup = ref<null | HTMLElement>(null)
 onMounted(() => {
-  confirmationPopup.value?.focus()
-})
+  if (popupStore.shouldPopupBeFocused && confirmationPopup.value != null) {
+    confirmationPopup.value.focus()
 
-onUnmounted(() => {
-  confirmationPopup.value?.blur()
-})
-
-const message = computed(() => {
-  if (props.isResponseError) {
-    const isCustomMessage =
-      userStore.deleteAccountError?.includes('auth/wrong-password') ||
-      props.errorMessage === 'auth/wrong-password' ||
-      props.errorMessage === 'auth/email-already-in-use' ||
-      props.errorMessage === 'auth/user-not-found'
-
-    if (route.path === '/dashboard' && isCustomMessage)
-      return 'The password is incorrect'
-
-    return isCustomMessage
-      ? 'The user name or password are incorrect'
-      : 'Ooops, something went wrong. Try again later.'
+    setTimeout(() => {
+      confirmationPopup.value?.blur()
+    }, popupStore.durationOfPopupShowing)
   }
-
-  const successMessages = {
-    '/': 'You logged in successfully',
-    '/sign-up': 'You signed up successfully',
-    '/dashboard': 'You successfully performed this action'
-  }
-
-  if (route.path === '/dashboard' && userStore.userID == null)
-    return 'You logged out successfully'
-
-  return successMessages[route.path as keyof typeof successMessages]
 })
 </script>
 
 <style lang="postcss" scoped>
 .popup-text {
-  @apply fixed inset-0 bottom-auto py-10 mx-auto w-[min(90%,400px)];
-  @apply translate-y-8 text-center text-gray-900 rounded-xl z-[100];
-  @apply focus-visible:outline-transparent bg-red-400;
+  @apply fixed inset-0 bottom-auto px-4 py-10 mx-auto w-[min(90%,25rem)];
+  @apply translate-y-8 text-center text-gray-900 bg-red-400 rounded-xl z-[100];
+  @apply outline outline-transparent;
 }
 
 .popup-enter-from,

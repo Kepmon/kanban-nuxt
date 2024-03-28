@@ -1,18 +1,10 @@
 import type { Routes } from '../types/routePaths'
 
-export const isResponseError = ref(false)
-export const isPopupShown = ref(false)
-
 export const handleResponse = (
   response: boolean,
   currentPath?: Routes,
   loading?: Ref<boolean>
 ) => {
-  const duration = 3000
-
-  isResponseError.value = !response
-  isPopupShown.value = true
-
   if (response && currentPath != null) {
     const pathToGo = {
       '/sign-up': '/',
@@ -29,7 +21,5 @@ export const handleResponse = (
     if (loading != null) {
       loading.value = false
     }
-
-    isPopupShown.value = false
-  }, duration)
+  }, 3000)
 }

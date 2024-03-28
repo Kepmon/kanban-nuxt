@@ -3,7 +3,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      title: 'Kanban | Task Manager'
+      title: 'Kanban | Task Manager',
+      htmlAttrs: {
+        lang: 'en'
+      }
     }
   },
   modules: [

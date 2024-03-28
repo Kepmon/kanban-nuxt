@@ -8,14 +8,6 @@
       />
     </transition>
 
-    <transition name="popup">
-      <confirmation-popup
-        v-if="isPopupShown"
-        :isResponseError="isResponseError"
-        :errorMessage="errorMessage"
-      />
-    </transition>
-
     <theme-toggle />
 
     <main class="auth-main mt-14">
@@ -40,10 +32,9 @@
         />
 
         <button
+          ref="submitBtnRef"
           class="regular-button purple-class"
-          :aria-disabled="
-            form.meta.value.valid === false || buttonLoading ? true : false
-          "
+          :aria-disabled="form.meta.value.valid === false || buttonLoading"
         >
           {{ buttonLoading ? 'Loading...' : currentPath.action }}
         </button>
@@ -74,13 +65,11 @@ import type { ZodType, ZodTypeDef } from 'zod'
 import { routesSchema } from '~/types/routePaths'
 import LogoIcon from '~/components/svgs/LogoIcon.vue'
 import AuthInput from '~/components/inputs/AuthInput.vue'
-import {
-  isPopupShown,
-  isResponseError,
-  handleResponse
-} from '../composables/responseHandler'
+import { handleResponse } from '../composables/responseHandler'
 import { toTypedSchema } from '@vee-validate/zod'
+import { useActiveElement } from '@vueuse/core'
 
+const activeElement = useActiveElement()
 useDark()
 
 const props = defineProps<{
@@ -105,18 +94,22 @@ const availablePaths = {
   }
 }
 
+const popupStore = usePopupStore()
 const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
+
+const submitBtnRef = ref<null | HTMLButtonElement>(null)
+const buttonLoading = ref(false)
 
 const form = useForm({
   validationSchema: toTypedSchema(props.authSchema)
 })
 
-const errorMessage = ref('')
-const buttonLoading = ref(false)
-
 const onSubmit = form.handleSubmit(async (values) => {
+  if (submitBtnRef.value != null) {
+    submitBtnRef.value.setAttribute('disabled', '')
+  }
   buttonLoading.value = true
 
   const response = await $fetch('/api/auth', {
@@ -124,15 +117,31 @@ const onSubmit = form.handleSubmit(async (values) => {
     body: {
       email: values.email,
       password: values.password,
-      repeatPassword: 'repeatPassword' in values ? values.repeatPassword : null
+      repeatPassword: 'repeatPassword' in values ? values.repeatPassword : null,
+      path: route.path
     }
   })
 
+  if (submitBtnRef.value != null) {
+    submitBtnRef.value.removeAttribute('disabled')
+  }
+  buttonLoading.value = false
+
+  popupStore.popupMessage = response.message
+  setTimeout(() => {
+    popupStore.popupMessage = ''
+  }, popupStore.durationOfPopupShowing)
+
   if (!response.ok) {
-    errorMessage.value = response.responseError
+    setFormErrors()
+    popupStore.isPopupShown = true
+
+    setTimeout(() => {
+      popupStore.isPopupShown = false
+      popupStore.popupMessage = ''
+    }, popupStore.durationOfPopupShowing)
   }
 
-  buttonLoading.value = false
   checkForCurrentPath(response.ok)
 })
 
@@ -141,6 +150,28 @@ const checkForCurrentPath = (response: boolean) => {
 
   const currentPath = pathValidation.success ? pathValidation.data : undefined
   handleResponse(response, currentPath, buttonLoading)
+}
+
+const setFormErrors = () => {
+  if (activeElement.value != null && 'name' in activeElement.value) {
+    activeElement.value.setAttribute('aria-describedby', 'confirmation-popup')
+    activeElement.value.focus()
+
+    setTimeout(() => {
+      activeElement.value?.removeAttribute('aria-describedby')
+    }, 1000)
+
+    return
+  }
+
+  if (submitBtnRef.value != null) {
+    submitBtnRef.value.setAttribute('aria-describedby', 'confirmation-popup')
+    submitBtnRef.value.focus()
+
+    setTimeout(() => {
+      submitBtnRef.value?.removeAttribute('aria-describedby')
+    }, 1000)
+  }
 }
 </script>
 

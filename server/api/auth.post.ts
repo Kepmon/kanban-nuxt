@@ -10,7 +10,12 @@ import { z } from 'zod'
 const userSchema = z.object({
   email: z.string().email(),
   password: z.string(),
-  repeatPassword: z.string().nullable()
+  repeatPassword: z.string().nullable(),
+  path: z.literal('/').or(z.literal('/sign-up'))
+})
+
+const errorSchema = z.object({
+  message: z.string()
 })
 
 const login = async ({ email, password }: z.infer<typeof userSchema>) => {
@@ -30,15 +35,33 @@ const register = async ({ email, password }: z.infer<typeof userSchema>) => {
   await signOut(auth)
 }
 
+const setPopupMessage = (path: '/' | '/sign-up', errorMessage: string = '') => {
+  if (errorMessage !== '') {
+    const isCustomMessage =
+      errorMessage.includes('auth/wrong-password') ||
+      errorMessage.includes('auth/invalid-credential')
+
+    return isCustomMessage
+      ? 'Error: The user name or password are incorrect'
+      : 'Error: Ooops, something went wrong. Try again later.'
+  }
+
+  const successMessages = {
+    '/': 'Success: You logged in successfully',
+    '/sign-up': 'Success: You signed up successfully'
+  }
+
+  return successMessages[path]
+}
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-
   const isUserDataOk = userSchema.safeParse(body)
 
   if (!isUserDataOk.success)
     return {
       ok: false,
-      responseError: 'wrong-data'
+      message: setPopupMessage('/', 'wrong-data')
     }
 
   const validatedBody = isUserDataOk.data
@@ -49,12 +72,19 @@ export default defineEventHandler(async (event) => {
 
     return {
       ok: true,
-      responseError: ''
+      message: setPopupMessage(validatedBody.path)
     }
   } catch (err) {
+    const doesErrContainMessage = errorSchema.safeParse(err)
+
     return {
       ok: false,
-      responseError: 'sth-went-wrong'
+      message: doesErrContainMessage.success
+        ? setPopupMessage(
+            validatedBody.path,
+            doesErrContainMessage.data.message
+          )
+        : 'sth-went-wrong'
     }
   }
 })

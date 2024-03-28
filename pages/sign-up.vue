@@ -22,4 +22,8 @@ const authSchema = z
       })
     }
   })
+
+definePageMeta({
+  middleware: ['navigate']
+})
 </script>
