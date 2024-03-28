@@ -16,6 +16,7 @@
         'border-red-400': errorMessage,
         'border-blue-40 focus-visible:border-purple-400': !errorMessage
       }"
+      :validateOnInput="true"
     />
     <ErrorMessage
       :name="name"

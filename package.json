@@ -13,7 +13,6 @@
     "@gradin/tailwindcss-scrollbar": "^3.0.1",
     "@pinia/nuxt": "^0.5.1",
     "@vee-validate/nuxt": "^4.12.6",
-    "@vee-validate/yup": "^4.12.6",
     "@vee-validate/zod": "^4.12.6",
     "@vueuse/nuxt": "^10.9.0",
     "firebase": "^10.9.0",

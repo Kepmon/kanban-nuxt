@@ -32,10 +32,9 @@
         />
 
         <button
+          ref="submitBtnRef"
           class="regular-button purple-class"
-          :aria-disabled="
-            form.meta.value.valid === false || buttonLoading ? true : false
-          "
+          :aria-disabled="form.meta.value.valid === false || buttonLoading"
         >
           {{ buttonLoading ? 'Loading...' : currentPath.action }}
         </button>
@@ -100,13 +99,17 @@ const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
 
+const submitBtnRef = ref<null | HTMLButtonElement>(null)
+const buttonLoading = ref(false)
+
 const form = useForm({
   validationSchema: toTypedSchema(props.authSchema)
 })
 
-const buttonLoading = ref(false)
-
 const onSubmit = form.handleSubmit(async (values) => {
+  if (submitBtnRef.value != null) {
+    submitBtnRef.value.setAttribute('disabled', '')
+  }
   buttonLoading.value = true
 
   const response = await $fetch('/api/auth', {
@@ -119,6 +122,12 @@ const onSubmit = form.handleSubmit(async (values) => {
     }
   })
 
+  if (submitBtnRef.value != null) {
+    submitBtnRef.value.removeAttribute('disabled')
+  }
+  buttonLoading.value = false
+  popupStore.popupMessage = response.message
+
   if (!response.ok) {
     setFormErrors()
     popupStore.isPopupShown = true
@@ -128,8 +137,6 @@ const onSubmit = form.handleSubmit(async (values) => {
     }, popupStore.durationOfPopupShowing)
   }
 
-  popupStore.popupMessage = response.message
-  buttonLoading.value = false
   checkForCurrentPath(response.ok)
 })
 
@@ -141,12 +148,25 @@ const checkForCurrentPath = (response: boolean) => {
 }
 
 const setFormErrors = () => {
-  activeElement.value?.focus()
-  activeElement.value?.setAttribute('aria-describedby', 'confirmation-popup')
+  if (activeElement.value != null && 'name' in activeElement.value) {
+    activeElement.value.setAttribute('aria-describedby', 'confirmation-popup')
+    activeElement.value.focus()
 
-  setTimeout(() => {
-    activeElement.value?.removeAttribute('aria-describedby')
-  }, 1000)
+    setTimeout(() => {
+      activeElement.value?.removeAttribute('aria-describedby')
+    }, 1000)
+
+    return
+  }
+
+  if (submitBtnRef.value != null) {
+    submitBtnRef.value.setAttribute('aria-describedby', 'confirmation-popup')
+    submitBtnRef.value.focus()
+
+    setTimeout(() => {
+      submitBtnRef.value?.removeAttribute('aria-describedby')
+    }, 1000)
+  }
 }
 </script>
 
