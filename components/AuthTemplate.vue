@@ -126,7 +126,11 @@ const onSubmit = form.handleSubmit(async (values) => {
     submitBtnRef.value.removeAttribute('disabled')
   }
   buttonLoading.value = false
+
   popupStore.popupMessage = response.message
+  setTimeout(() => {
+    popupStore.popupMessage = ''
+  }, popupStore.durationOfPopupShowing)
 
   if (!response.ok) {
     setFormErrors()
@@ -134,6 +138,7 @@ const onSubmit = form.handleSubmit(async (values) => {
 
     setTimeout(() => {
       popupStore.isPopupShown = false
+      popupStore.popupMessage = ''
     }, popupStore.durationOfPopupShowing)
   }
 

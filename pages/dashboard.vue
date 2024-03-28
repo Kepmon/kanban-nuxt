@@ -27,6 +27,7 @@ const logout = async () => {
 
   setTimeout(() => {
     popupStore.isPopupShown = false
+    popupStore.popupMessage = ''
   }, popupStore.durationOfPopupShowing)
 
   if (response) {

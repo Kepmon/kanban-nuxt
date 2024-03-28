@@ -1,7 +1,9 @@
 <template>
   <div>
     <transition name="popup">
-      <confirmation-popup v-if="popupStore.isPopupShown" />
+      <confirmation-popup
+        v-if="popupStore.isPopupShown && popupStore.popupMessage !== ''"
+      />
     </transition>
 
     <NuxtPage />
