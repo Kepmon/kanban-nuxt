@@ -1,3 +1,1 @@
-import { auth } from '../../firebase'
-
-export default defineEventHandler(() => auth.currentUser?.uid)
+export default defineEventHandler((event) => getCookie(event, 'userID'))

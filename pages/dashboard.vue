@@ -11,6 +11,7 @@ definePageMeta({
 })
 
 useDark()
+
 const popupStore = usePopupStore()
 const route = useRoute()
 const router = useRouter()

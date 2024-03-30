@@ -18,8 +18,16 @@ const errorSchema = z.object({
   message: z.string()
 })
 
-const login = async ({ email, password }: z.infer<typeof userSchema>) => {
+const login = async (
+  { email, password }: z.infer<typeof userSchema>,
+  event: H3Event<EventHandlerRequest>
+) => {
   await signInWithEmailAndPassword(auth, email, password)
+
+  setCookie(event, 'userID', auth.currentUser?.uid || '', {
+    httpOnly: true,
+    maxAge: 30 * 24 * 60
+  })
 }
 
 const register = async ({ email, password }: z.infer<typeof userSchema>) => {
@@ -68,7 +76,7 @@ export default defineEventHandler(async (event) => {
   const submitFn = validatedBody.repeatPassword == null ? login : register
 
   try {
-    await submitFn(validatedBody)
+    await submitFn(validatedBody, event)
 
     return {
       ok: true,
