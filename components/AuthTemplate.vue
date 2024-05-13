@@ -132,28 +132,6 @@ const checkForCurrentPath = (response: boolean) => {
   const currentPath = pathValidation.success ? pathValidation.data : undefined
   handleResponse(response, currentPath, buttonLoading)
 }
-
-// const setFormErrors = () => {
-//   if (activeElement.value != null && 'name' in activeElement.value) {
-//     activeElement.value.setAttribute('aria-describedby', 'confirmation-popup')
-//     activeElement.value.focus()
-
-//     setTimeout(() => {
-//       activeElement.value?.removeAttribute('aria-describedby')
-//     }, 1000)
-
-//     return
-//   }
-
-//   if (submitBtnRef.value != null) {
-//     submitBtnRef.value.setAttribute('aria-describedby', 'confirmation-popup')
-//     submitBtnRef.value.focus()
-
-//     setTimeout(() => {
-//       submitBtnRef.value?.removeAttribute('aria-describedby')
-//     }, 1000)
-//   }
-// }
 </script>
 
 <style lang="postcss" scoped>

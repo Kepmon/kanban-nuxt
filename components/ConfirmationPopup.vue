@@ -1,7 +1,6 @@
 <template>
   <p
     role="alert"
-    id="confirmation-popup"
     data-popup="confirmation"
     class="popup-text"
     :class="popupStore.popupMessage.includes('Success:') && 'opacity-0 scale-0'"
