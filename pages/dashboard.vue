@@ -26,11 +26,6 @@ if (process.client) {
 const logout = async () => {
   const response = await $fetch('/api/auth')
 
-  setTimeout(() => {
-    popupStore.isPopupShown = false
-    popupStore.popupMessage = ''
-  }, popupStore.durationOfPopupShowing)
-
   if (response) {
     popupStore.popupMessage = 'Success: You logged out successfully'
     navigateTo('/')
@@ -38,6 +33,8 @@ const logout = async () => {
     popupStore.popupMessage =
       'Error: Ooops, something went wrong. Try again later.'
   }
+
+  popupStore.showPopup()
 }
 
 onMounted(() => {

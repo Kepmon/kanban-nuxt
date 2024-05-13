@@ -32,9 +32,9 @@
         />
 
         <button
-          ref="submitBtnRef"
           class="regular-button purple-class"
           :aria-disabled="form.meta.value.valid === false || buttonLoading"
+          :disabled="buttonLoading"
         >
           {{ buttonLoading ? 'Loading...' : currentPath.action }}
         </button>
@@ -67,9 +67,7 @@ import LogoIcon from '~/components/svgs/LogoIcon.vue'
 import AuthInput from '~/components/inputs/AuthInput.vue'
 import { handleResponse } from '../composables/responseHandler'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useActiveElement } from '@vueuse/core'
 
-const activeElement = useActiveElement()
 useDark()
 
 const props = defineProps<{
@@ -99,7 +97,6 @@ const route = useRoute()
 const path = route.path
 const currentPath = ref(availablePaths[path as keyof typeof availablePaths])
 
-const submitBtnRef = ref<null | HTMLButtonElement>(null)
 const buttonLoading = ref(false)
 
 const form = useForm({
@@ -107,9 +104,6 @@ const form = useForm({
 })
 
 const onSubmit = form.handleSubmit(async (values) => {
-  if (submitBtnRef.value != null) {
-    submitBtnRef.value.setAttribute('disabled', '')
-  }
   buttonLoading.value = true
 
   const response = await $fetch('/api/auth', {
@@ -122,25 +116,12 @@ const onSubmit = form.handleSubmit(async (values) => {
     }
   })
 
-  if (submitBtnRef.value != null) {
-    submitBtnRef.value.removeAttribute('disabled')
-  }
   buttonLoading.value = false
+  popupStore.showPopup(response.message)
 
-  popupStore.popupMessage = response.message
-  setTimeout(() => {
-    popupStore.popupMessage = ''
-  }, popupStore.durationOfPopupShowing)
-
-  if (!response.ok) {
-    setFormErrors()
-    popupStore.isPopupShown = true
-
-    setTimeout(() => {
-      popupStore.isPopupShown = false
-      popupStore.popupMessage = ''
-    }, popupStore.durationOfPopupShowing)
-  }
+  // if (!response.ok) {
+  //   setFormErrors()
+  // }
 
   checkForCurrentPath(response.ok)
 })
@@ -152,27 +133,27 @@ const checkForCurrentPath = (response: boolean) => {
   handleResponse(response, currentPath, buttonLoading)
 }
 
-const setFormErrors = () => {
-  if (activeElement.value != null && 'name' in activeElement.value) {
-    activeElement.value.setAttribute('aria-describedby', 'confirmation-popup')
-    activeElement.value.focus()
+// const setFormErrors = () => {
+//   if (activeElement.value != null && 'name' in activeElement.value) {
+//     activeElement.value.setAttribute('aria-describedby', 'confirmation-popup')
+//     activeElement.value.focus()
 
-    setTimeout(() => {
-      activeElement.value?.removeAttribute('aria-describedby')
-    }, 1000)
+//     setTimeout(() => {
+//       activeElement.value?.removeAttribute('aria-describedby')
+//     }, 1000)
 
-    return
-  }
+//     return
+//   }
 
-  if (submitBtnRef.value != null) {
-    submitBtnRef.value.setAttribute('aria-describedby', 'confirmation-popup')
-    submitBtnRef.value.focus()
+//   if (submitBtnRef.value != null) {
+//     submitBtnRef.value.setAttribute('aria-describedby', 'confirmation-popup')
+//     submitBtnRef.value.focus()
 
-    setTimeout(() => {
-      submitBtnRef.value?.removeAttribute('aria-describedby')
-    }, 1000)
-  }
-}
+//     setTimeout(() => {
+//       submitBtnRef.value?.removeAttribute('aria-describedby')
+//     }, 1000)
+//   }
+// }
 </script>
 
 <style lang="postcss" scoped>

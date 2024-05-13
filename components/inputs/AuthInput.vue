@@ -1,20 +1,15 @@
 <template>
   <div class="grid gap-2 relative">
     <label class="text-xs" :for="name">{{ label }}</label>
-
     <Field
-      v-on="
-        name === 'password'
-          ? { input: (e: InputEvent) => updatePassword(e) }
-          : {}
-      "
+      @blur="checkForInputError"
       :id="name"
       :type="type"
       :name="name"
       class="input mb-[var(--space-for-error-msg)]"
       :class="{
-        'border-red-400': errorMessage,
-        'border-blue-40 focus-visible:border-purple-400': !errorMessage
+        'border-red-400': isInputError,
+        'border-blue-40 focus-visible:border-purple-400': !isInputError
       }"
       :validateOnInput="true"
     />
@@ -26,19 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '~/stores/user'
-
 const props = defineProps<{
   label: string
   name: string
   type: HTMLInputElement['type']
 }>()
 
-const userStore = useUserStore()
 const name = toRef(props, 'name')
-const { errorMessage } = useField(name)
-
-const updatePassword = (e: InputEvent) => {
-  userStore.passwordToDeleteAccount = (e.target as HTMLInputElement).value
-}
+const isInputError = ref(false)
 </script>
