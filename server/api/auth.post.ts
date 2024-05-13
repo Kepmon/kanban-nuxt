@@ -6,6 +6,7 @@ import {
 } from 'firebase/auth'
 import { setDoc, doc } from 'firebase/firestore'
 import { z } from 'zod'
+import { H3Event, EventHandlerRequest } from 'h3'
 
 const userSchema = z.object({
   email: z.string().email(),

@@ -41,11 +41,16 @@ const logout = async () => {
 }
 
 onMounted(() => {
-  if (process.client && 'authenticated' in route.query) {
-    const popupStore = usePopupStore()
+  if (
+    process.client &&
+    sessionStorage.getItem('TM-isUserActive') != null &&
+    'authenticated' in route.query
+  ) {
     popupStore.showPopup(
       `Error: Only ${route.query.authenticated === 'true' ? 'unauthenticated' : 'authenticated'} users can reach the requested page`
     )
   }
+
+  sessionStorage.setItem('TM-isUserActive', 'true')
 })
 </script>
